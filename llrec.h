@@ -84,7 +84,23 @@ Node* llfilter(Node* head, Comp pred)
     // Provide your implementation below
     //*********************************************
 
+    // base case, empty list
+    if (!head) {
+        return NULL;
+    }
 
+    // recursive case, filters through the linked list
+    Node* nextNode = llfilter(head->next, pred);
+
+    // checks if node matches condition, removes if true, keeps in list if false
+    if (pred(head->val)) {
+        delete head;
+        return nextNode;
+    }
+    else {
+        head->next = nextNode;
+        return head;
+    }
 }
 
 #endif

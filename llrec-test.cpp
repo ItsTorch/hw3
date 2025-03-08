@@ -67,6 +67,12 @@ void dealloc(Node* head)
 //   function object struct declarations
 // -----------------------------------------------
 
+// to test llfilter, remove odd numbers
+struct IsOdd {
+  bool operator()(int val) {
+    return val % 2 != 0;
+  }
+};
 
 
 
@@ -86,10 +92,29 @@ int main(int argc, char* argv[])
     print(head);
 
     // Test out your linked list code
-
-
-
     
+    // test llpivot
+    int pivot = 10;
+    Node* smaller = NULL;
+    Node* larger = NULL;
+    llpivot(head, smaller, larger, pivot);
+
+    cout << "List <= " << pivot << endl;
+    print(smaller);
+
+    cout << "List > " << pivot << endl;
+    print(larger);
+
+    // test llfilter
+    smaller = llfilter(smaller, IsOdd());
+
+    cout << "List <= " << pivot << " with odd number filtered out" << endl;
+    print(smaller);
+
+    //clean up
+    dealloc(smaller);
+    dealloc(larger);
+
     return 0;
 
 }
