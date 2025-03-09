@@ -1,3 +1,4 @@
+#include <iostream>
 #include "llrec.h"
 
 //*********************************************
@@ -7,26 +8,32 @@
 void llpivot(Node *&head, Node *&smaller, Node *&larger, int pivot) {
   // base case if head is null
   if (!head) {
+    smaller = nullptr;
+    larger = nullptr;
     return;
   }
 
   // hold the next Node
   Node* nextNode = head->next;
 
+  // disconnect current node from list
+  head->next = nullptr;
+
+  if (!smaller) {
+    smaller = nullptr;
+  }
+  if (!larger) {
+    larger = nullptr;
+  }
+
   // check if head is larger or smaller than pivot, then add to corresponding list
   if (head->val <= pivot) {
-    head->next = smaller;
     smaller = head;
+    llpivot(nextNode, smaller->next, larger, pivot);
   }
   else {
-    head->next = larger;
     larger = head;
+    llpivot(nextNode, smaller, larger->next, pivot);
   }
-
-  // remove head from linked list
-  head = NULL;
-
-  //recursive case
-  llpivot(nextNode, smaller, larger, pivot);
-
+  head = nullptr;
 }
