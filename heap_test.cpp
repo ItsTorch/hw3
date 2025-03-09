@@ -1,10 +1,30 @@
 #include <iostream>
 #include <functional>
+#include <stdexcept>
 #include "heap.h"
 
 using namespace std;
 
 int main() {
+  try {
+    // test empty heap
+    Heap<int> emptyHeap;
+    cout << "Trying to call top() on empty heap" << endl;
+    cout << emptyHeap.top() << endl;
+  }
+  catch (const std::underflow_error& e) {
+    cout << "Caught expected exception: " << e.what() << endl;
+  }
+
+  try {
+    Heap<int> emptyHeap;
+    cout << "Trying to call pop() on empty heap" << endl;
+    emptyHeap.pop();
+  }
+  catch (const std::underflow_error& e) {
+    cout << "Caught expected exception: " <<e.what() << endl;
+  }
+  
   // test min-heap, already m = 2
   Heap<int> minHeap;
   minHeap.push(3);
@@ -59,6 +79,40 @@ int main() {
   while (!stringMinHeap.empty()) {
     cout << stringMinHeap.top() << " ";
     stringMinHeap.pop();
+  }
+  cout << endl << endl;
+
+  // test large number of elements
+  Heap<int> largeHeap;
+  for (int i = 100; i >= 1; --i) {
+    largeHeap.push(i);
+  }
+  cout << "Large heap: ";
+  while (!largeHeap.empty()) {
+    cout << largeHeap.top() << " ";
+    largeHeap.pop();
+  }
+  cout << endl << endl;
+
+  // test heap with pointers
+
+  struct IntPtrComp {
+    bool operator()(int*a, int* b) const {
+      return *a < *b;
+    }
+  };
+
+  Heap<int*, IntPtrComp> pointerHeap;
+  int a = 5, b = 3, c = 8, d = 1;
+  pointerHeap.push(&a);
+  pointerHeap.push(&b);
+  pointerHeap.push(&c);
+  pointerHeap.push(&d);
+
+  cout << "Heap of pointers: ";
+  while (!pointerHeap.empty()) {
+    cout << *(pointerHeap.top()) << " ";
+    pointerHeap.pop();
   }
   cout << endl << endl;
 

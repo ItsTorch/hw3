@@ -38,7 +38,8 @@ void Circuit::test()
 	m_gates.push_back(g);
     
 	Event* e = new Event {0,m_wires[0],'0'};
-	m_pq.push(e);
+  
+  m_pq.push(e);
 	
 	e = new Event {0,m_wires[1],'1'};
 	m_pq.push(e);
@@ -136,7 +137,7 @@ bool Circuit::parse(const char* fname)
                 getline(ss, s_state, ',');
             	Event* e = new Event {static_cast<uint64_t>(stoi(s_time)),m_wires[stoi(s_wire)],s_state[0]};
                 //std::cout << s_time << "," << s_wire << "," << s_state << std::endl;
-            	m_pq.push(e);
+              m_pq.push(e);
             }
         }
     }
@@ -149,7 +150,6 @@ bool Circuit::advance(std::ostream& os)
 	{
 		return false;
 	}
-    
     m_current_time = m_pq.top()->time;
     std::stringstream ss;
     ss << "@" << m_current_time << std::endl;

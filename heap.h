@@ -62,8 +62,8 @@ public:
 
 private:
   /// Add whatever helper functions and data members you need below
-  void heapify(size_t idx);
-  void trickleUp(size_t idx);
+  void heapifyDown(size_t idx);
+  void heapifyUp(size_t idx);
   size_t parent(size_t idx) const {
     return (idx - 1) / m_;
   }
@@ -85,11 +85,11 @@ Heap<T, PComparator>::Heap(int m, PComparator c) : m_(m), comp_(c) {}
 template <typename T, typename PComparator>
 Heap<T, PComparator>::~Heap() {}
 
-// push, also keeps heapness by calling trickleUp on new item pushed
+// push, also keeps heapness by calling heapifyUp on new item pushed
 template <typename T, typename PComparator>
 void Heap<T, PComparator>::push(const T &item) {
   data_.push_back(item);
-  trickleUp(data_.size() - 1);
+  heapifyUp(data_.size() - 1);
 }
 
 // We will start top() for you to handle the case of 
@@ -124,8 +124,12 @@ void Heap<T,PComparator>::pop()
   }
   std::swap(data_[0], data_.back());
   data_.pop_back();
+
   // to keep heapness
-  heapify(0);
+  if (!empty()) {
+    heapifyDown(0);
+  }
+
 }
 
 // empty
@@ -140,34 +144,48 @@ size_t Heap<T, PComparator>::size() const {
   return data_.size();
 }
 
-// trickle up helper function
+// heapifyUp helper function
 template <typename T, typename PComparator>
-void Heap<T, PComparator>::trickleUp(size_t idx) {
-  
-  // keeps swapping with its parent up the tree until it is worse than its parent
-  while (idx > 0 && comp_(data_[idx], data_[parent(idx)])) {
-    std::swap(data_[idx], data_[parent(idx)]);
-    idx = parent(idx);
+void Heap<T, PComparator>::heapifyUp(size_t idx) {
+  while (idx > 0) {
+    size_t p = parent(idx);
+
+    // check if current node should be swapped with its parent
+    if (comp_(data_[idx], data_[p])) {
+
+      T temp = data_[idx];
+      data_[idx] = data_[p];
+      data_[p] = temp;
+
+      idx = p;
+    }
+    else {
+      break;
+    }
   }
 }
 
-// heapify helper function
+// heapifyDown helper function
 template <typename T, typename PComparator>
-void Heap<T, PComparator>::heapify(size_t idx) {
-  
+void Heap<T, PComparator>::heapifyDown(size_t idx) {
   // checks for best child to swap with parent to push item down the tree
   size_t best = idx;
-  for (size_t k = 0; k < (size_t)m_; ++k) {
-    size_t c = child(idx, k);
+  size_t numChildren = m_;
+
+  // find smallest child
+  for (size_t k = 1; k <= numChildren; ++k) {
+    size_t c = child(idx, k - 1);
     if (c < data_.size() && comp_(data_[c], data_[best])) {
       best = c;
     }
   }
 
-  // heapify done recursively down the tree
+  // only swap if best chlid is better than parent
   if (best != idx) {
     std::swap(data_[idx], data_[best]);
-    heapify(best);
+
+    // continue heapifying recursively
+    heapifyDown(best);
   }
 }
 
